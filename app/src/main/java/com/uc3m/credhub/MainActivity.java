@@ -1,6 +1,7 @@
 package com.uc3m.credhub;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +19,16 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements MainRecyclerViewAdapter.ItemClickListener {
 
     MainRecyclerViewAdapter adapter;
-    ArrayList<String> animalNames = new ArrayList<>();
+    ArrayList<PasswordEntity> passwordList = new ArrayList<>();
+
+    DatabaseHelper db;
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getDataFromDB();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +36,9 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //Databasehelper
+        db = new DatabaseHelper(this);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -35,17 +48,10 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
             }
         });
 
-        // data to populate the RecyclerView with
-        animalNames.add("Horse");
-        animalNames.add("Cow");
-        animalNames.add("Camel");
-        animalNames.add("Sheep");
-        animalNames.add("Goat");
-
         // set up the RecyclerView
         RecyclerView recyclerView = findViewById(R.id.rvAnimals);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new MainRecyclerViewAdapter(this, animalNames);
+        adapter = new MainRecyclerViewAdapter(this, passwordList);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
@@ -57,9 +63,10 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
     @Override
     public void onItemClick(View view, int position) {
         Intent intent = new Intent(getBaseContext(), DetailActivity.class);
-        intent.putExtra("name", animalNames.get(position));
+        intent.putExtra("description", passwordList.get(position).getDescription());
+        intent.putExtra("username", passwordList.get(position).getUsername());
+        intent.putExtra("password", passwordList.get(position).getPassword());
         startActivity(intent);
-        Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -67,6 +74,20 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    public void getDataFromDB() {
+        passwordList.clear();
+        Cursor res = db.getAllData();
+        if (res.getCount() == 0) {
+            Toast.makeText(this, "No data in DB", Toast.LENGTH_SHORT).show();
+        }
+
+        while (res.moveToNext()) {
+            PasswordEntity entity = new PasswordEntity(res.getString(0), res.getString(1), res.getString(2), res.getString(3));
+            passwordList.add(entity);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -80,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
         if (id == R.id.action_import) {
             startActivity(new Intent(getBaseContext(), ImportActivity.class));
             return true;
+        } else if (id == R.id.action_refresh) {
+            getDataFromDB();
         }
 
         return super.onOptionsItemSelected(item);

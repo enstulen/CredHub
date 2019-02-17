@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CredHub</string>
     <string name="action_import">Import</string>
+    <string name="action_refresh">Refresh</string>
 </resources>
