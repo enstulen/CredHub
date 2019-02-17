@@ -33,7 +33,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     public void onBindViewHolder(ViewHolder holder, int position) {
         String username = mData.get(position).getUsername();
         String id = mData.get(position).getID();
-        holder.myTextView.setText(id +": " + username);
+        holder.myTextView.setText(id + ": " + username);
     }
 
     // total number of rows

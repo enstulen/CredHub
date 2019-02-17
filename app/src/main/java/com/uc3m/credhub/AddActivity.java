@@ -32,7 +32,7 @@ public class AddActivity extends AppCompatActivity {
 
     }
 
-    public void addData(){
+    public void addData() {
         saveButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override

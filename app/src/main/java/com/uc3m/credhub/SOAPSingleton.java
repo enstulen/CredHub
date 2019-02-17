@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-class SOAPSingleton
-{
+class SOAPSingleton {
     private static HttpTransportSE androidHttpTransport;
     private static List<HeaderProperty> headerList_basicAuth;
     private static final String WS_NAMESPACE = "http://sdm_webrepo/";
@@ -39,14 +38,12 @@ class SOAPSingleton
     public String s;
 
     // private constructor restricted to this class itself
-    private SOAPSingleton()
-    {
+    private SOAPSingleton() {
         s = "Hello I am a string part of Singleton class";
     }
 
     // static method to create instance of Singleton class
-    public static SOAPSingleton getInstance()
-    {
+    public static SOAPSingleton getInstance() {
         if (single_instance == null) {
             single_instance = new SOAPSingleton();
             single_instance.envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -64,33 +61,30 @@ class SOAPSingleton
 
             @Override
             public void run() {
-                try
-                {
+                try {
                     // Export new record
-                    System.out.println(id);
-                    System.out.println(username);
-                    System.out.println(password);
-
                     request = new SoapObject(WS_NAMESPACE, WS_METHOD_EXPORT);
 
                     PropertyInfo propId = new PropertyInfo();
-                    propId.name = "arg0"; propId.setValue(id); propId.type = PropertyInfo.STRING_CLASS;
+                    propId.name = "arg0";
+                    propId.setValue(id);
+                    propId.type = PropertyInfo.STRING_CLASS;
                     request.addProperty(propId);
                     PropertyInfo propUser = new PropertyInfo();
-                    propUser.name = "arg1"; propUser.setValue(username); propUser.type = PropertyInfo.STRING_CLASS;
+                    propUser.name = "arg1";
+                    propUser.setValue(username);
+                    propUser.type = PropertyInfo.STRING_CLASS;
                     request.addProperty(propUser);
                     PropertyInfo propPass = new PropertyInfo();
-                    propPass.name = "arg2"; propPass.setValue(password); propPass.type = PropertyInfo.STRING_CLASS;
+                    propPass.name = "arg2";
+                    propPass.setValue(password);
+                    propPass.type = PropertyInfo.STRING_CLASS;
                     request.addProperty(propPass);
 
                     envelope.setOutputSoapObject(request);
                     androidHttpTransport.call("\"" + WS_NAMESPACE + WS_METHOD_EXPORT + "\"", envelope, headerList_basicAuth);
                     System.out.println("Export result: " + envelope.getResponse().toString());
-                    System.out.println();
-
-                }
-                catch(Exception ex)
-                {
+                } catch (Exception ex) {
                     System.out.println("ERROR - " + ex.toString());
                 }
             }
@@ -103,7 +97,6 @@ class SOAPSingleton
             e.printStackTrace();
         }
 
-
     }
 
     public ArrayList<PasswordEntity> importData() {
@@ -112,8 +105,7 @@ class SOAPSingleton
 
             @Override
             public void run() {
-                try
-                {
+                try {
 
                     // Read list of all record identifiers stored on the repository
                     request = new SoapObject(WS_NAMESPACE, WS_METHOD_LIST);
@@ -121,47 +113,42 @@ class SOAPSingleton
                     envelope.setOutputSoapObject(request);
                     androidHttpTransport.call("\"" + WS_NAMESPACE + WS_METHOD_LIST + "\"", envelope, headerList_basicAuth);
                     Vector<SoapPrimitive> listIds = new Vector<SoapPrimitive>();
-                    if(envelope.getResponse() instanceof Vector) // 2+ elements
+                    if (envelope.getResponse() instanceof Vector) // 2+ elements
                         listIds.addAll((Vector<SoapPrimitive>) envelope.getResponse());
-                    else if(envelope.getResponse() instanceof SoapPrimitive) // 1 element
-                        listIds.add((SoapPrimitive)envelope.getResponse());
+                    else if (envelope.getResponse() instanceof SoapPrimitive) // 1 element
+                        listIds.add((SoapPrimitive) envelope.getResponse());
                     //System.out.println("List of records stored on the repo: ");
                     passwordList.clear();
 
-                    for(int i = 0; i < listIds.size(); i++)
-                    {
-                        if (listIds.size() > 0)
-                        {
+                    for (int i = 0; i < listIds.size(); i++) {
+                        if (listIds.size() > 0) {
                             PropertyInfo propId;
                             request = new SoapObject(WS_NAMESPACE, WS_METHOD_IMPORT);
                             propId = new PropertyInfo();
-                            propId.name = "arg0"; propId.setValue(listIds.get(i).toString()); propId.type = PropertyInfo.STRING_CLASS;
+                            propId.name = "arg0";
+                            propId.setValue(listIds.get(i).toString());
+                            propId.type = PropertyInfo.STRING_CLASS;
                             request.addProperty(propId);
                             envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
                             envelope.setOutputSoapObject(request);
                             androidHttpTransport.call("\"" + WS_NAMESPACE + WS_METHOD_IMPORT + "\"", envelope, headerList_basicAuth);
 
-                            Vector<SoapPrimitive> importedRecord = (Vector<SoapPrimitive>)envelope.getResponse();
-                            if(importedRecord.size() == 3)
-                            {
+                            Vector<SoapPrimitive> importedRecord = (Vector<SoapPrimitive>) envelope.getResponse();
+                            if (importedRecord.size() == 3) {
                                 System.out.println("Record imported successfully: ");
 /*                                System.out.println("ID: " + importedRecord.get(0));
                                 System.out.println("Username: " + importedRecord.get(1));
                                 System.out.println("Password: " + importedRecord.get(2));*/
                                 PasswordEntity entity = new PasswordEntity(importedRecord.get(0).toString(), "description", importedRecord.get(1).toString(), importedRecord.get(2).toString());
                                 passwordList.add(entity);
-                            }
-                            else
+                            } else
                                 System.out.println("Import error - " + importedRecord.get(0));
-                        }
-                        else System.out.println("Import aborted - No records found on the repo");
+                        } else System.out.println("Import aborted - No records found on the repo");
                         System.out.println("- " + listIds.get(i).toString());
                     }
                     return;
 
-                }
-                catch(Exception ex)
-                {
+                } catch (Exception ex) {
                     System.out.println("ERROR - " + ex.toString());
                 }
                 return;
