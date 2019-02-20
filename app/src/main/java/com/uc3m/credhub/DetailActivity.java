@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.UUID;
 
@@ -69,6 +70,6 @@ public class DetailActivity extends AppCompatActivity {
         String uuid = UUID.randomUUID().toString();
         SOAPSingleton soapSingleton = SOAPSingleton.getInstance();
         soapSingleton.exportRecord(uuid, username, password);
-
+        Toast.makeText(this, "Exported record", Toast.LENGTH_LONG).show();
     }
 }
