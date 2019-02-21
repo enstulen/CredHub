@@ -9,27 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
-
-import org.ksoap2.HeaderProperty;
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.PropertyInfo;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
-
-import java.net.URL;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 public class ImportActivity extends AppCompatActivity implements MainRecyclerViewAdapter.ItemClickListener {
 
@@ -45,6 +26,7 @@ public class ImportActivity extends AppCompatActivity implements MainRecyclerVie
         setTitle("Import");
 
         SOAPSingleton soap = SOAPSingleton.getInstance();
+        soap.context = this;
         passwordList = soap.importData();
 
         // set up the RecyclerView
@@ -65,6 +47,11 @@ public class ImportActivity extends AppCompatActivity implements MainRecyclerVie
 
     @Override
     public void onItemClick(View view, int position) {
+        switch (view.getId()){
+            case (R.id.row_button):
+             Toast.makeText(this, "Can't delete from server", Toast.LENGTH_LONG).show();
+        }
+
         boolean isinserted = db.insertData("No description", passwordList.get(position).getUsername(), passwordList.get(position).getPassword());
         if (isinserted == true) {
             Toast.makeText(this, "Data inserted in db", Toast.LENGTH_LONG).show();

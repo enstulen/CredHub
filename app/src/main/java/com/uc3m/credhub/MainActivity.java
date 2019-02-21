@@ -1,6 +1,7 @@
 package com.uc3m.credhub;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -55,18 +56,38 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
+        //Divider
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 new LinearLayoutManager(this).getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
+
+        //Sharedprefs webservice_url
+        SharedPreferences.Editor editor = getSharedPreferences("webservice_url", MODE_PRIVATE).edit();
+        editor.putString("webservice_url", "http://10.0.2.2/SDM/WebRepo?wsdl");
+        editor.apply();
     }
 
     @Override
     public void onItemClick(View view, int position) {
-        Intent intent = new Intent(getBaseContext(), DetailActivity.class);
-        intent.putExtra("description", passwordList.get(position).getDescription());
-        intent.putExtra("username", passwordList.get(position).getUsername());
-        intent.putExtra("password", passwordList.get(position).getPassword());
-        startActivity(intent);
+
+        switch (view.getId()) {
+
+            case R.id.row_button:
+                db.deleteData(passwordList.get(position).getID());
+                passwordList.remove(position);
+                adapter.notifyDataSetChanged();
+                Toast.makeText(this, "Deleted", Toast.LENGTH_LONG).show();
+                break;
+
+            default:
+                Intent intent = new Intent(getBaseContext(), DetailActivity.class);
+                intent.putExtra("description", passwordList.get(position).getDescription());
+                intent.putExtra("username", passwordList.get(position).getUsername());
+                intent.putExtra("password", passwordList.get(position).getPassword());
+                startActivity(intent);
+                break;
+        }
+
     }
 
     @Override

@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="10dp"
-    android:background="?android:attr/selectableItemBackground">
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    >
 
     <TextView
         android:id="@+id/row_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"/>
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:text="hei"
+        android:textSize="20sp" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/row_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DELETE"
+        android:layout_alignParentEnd="true"
+
+        />
+
+</RelativeLayout>

@@ -1,5 +1,8 @@
 package com.uc3m.credhub;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.PropertyInfo;
@@ -13,7 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import static android.content.Context.MODE_PRIVATE;
+
 class SOAPSingleton {
+    public static Context context;
     private static HttpTransportSE androidHttpTransport;
     private static List<HeaderProperty> headerList_basicAuth;
     private static final String WS_NAMESPACE = "http://sdm_webrepo/";
@@ -44,7 +50,10 @@ class SOAPSingleton {
 
     // static method to create instance of Singleton class
     public static SOAPSingleton getInstance() {
+
         if (single_instance == null) {
+        /*    SharedPreferences prefs = context.getSharedPreferences("webservice_url", MODE_PRIVATE);
+            String webservice_url = prefs.getString("webservice_url", "http://10.0.2.2/SDM/WebRepo?wsdl");*/
             single_instance = new SOAPSingleton();
             single_instance.envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             single_instance.USE_HTTPS = false;

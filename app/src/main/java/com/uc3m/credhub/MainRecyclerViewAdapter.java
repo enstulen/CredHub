@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     public void onBindViewHolder(ViewHolder holder, int position) {
         String username = mData.get(position).getUsername();
         String id = mData.get(position).getID();
-        holder.myTextView.setText(id + ": " + username);
+        holder.myTextView.setText(username);
     }
 
     // total number of rows
@@ -46,11 +47,16 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
+        Button button;
+
 
         ViewHolder(View itemView) {
             super(itemView);
             myTextView = itemView.findViewById(R.id.row_text);
+            button = itemView.findViewById(R.id.row_button);
+
             itemView.setOnClickListener(this);
+            button.setOnClickListener(this);
         }
 
         @Override
