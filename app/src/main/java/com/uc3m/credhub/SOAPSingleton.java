@@ -1,7 +1,6 @@
 package com.uc3m.credhub;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
@@ -15,8 +14,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
-import static android.content.Context.MODE_PRIVATE;
 
 class SOAPSingleton {
     public static Context context;
@@ -40,15 +37,14 @@ class SOAPSingleton {
     // static variable single_instance of type Singleton
     private static SOAPSingleton single_instance = null;
 
-    // variable of type String
-    public String s;
 
     // private constructor restricted to this class itself
-    private SOAPSingleton() {
-        s = "Hello I am a string part of Singleton class";
-    }
+    private SOAPSingleton() { }
 
-    // static method to create instance of Singleton class
+    /**
+     * Get the singleton instance
+     * @return
+     */
     public static SOAPSingleton getInstance() {
 
         if (single_instance == null) {
@@ -65,6 +61,12 @@ class SOAPSingleton {
         return single_instance;
     }
 
+    /**
+     * Export record to SOAP database
+     * @param id
+     * @param username
+     * @param password
+     */
     public void exportRecord(final String id, final String username, final String password) {
         Thread thread = new Thread(new Runnable() {
 
@@ -108,6 +110,10 @@ class SOAPSingleton {
 
     }
 
+    /**
+     * Import data from SOAP database
+     * @return
+     */
     public ArrayList<PasswordEntity> importData() {
 
         Thread thread = new Thread(new Runnable() {

@@ -22,14 +22,23 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         this.mData = data;
     }
 
-    // inflates the row layout from xml when needed
+    /**
+     * Inflates the row layout from xml when needed
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.main_recyclerview_row, parent, false);
         return new ViewHolder(view);
     }
 
-    // binds the data to the TextView in each row
+    /**
+     * Binds the data to the TextView in each row
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         String username = mData.get(position).getUsername();
@@ -37,14 +46,19 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         holder.myTextView.setText(username);
     }
 
-    // total number of rows
+    /**
+     * Total number of rows
+     * @return
+     */
     @Override
     public int getItemCount() {
         return mData.size();
     }
 
 
-    // stores and recycles views as they are scrolled off screen
+    /**
+     * Stores and recycles views as they are scrolled off screen
+     */
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
         Button button;
@@ -65,17 +79,17 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         }
     }
 
-    // convenience method for getting data at click position
-    String getItem(int id) {
-        return mData.get(id).getUsername();
-    }
-
-    // allows clicks events to be caught
+    /**
+     * Allows clicks events to be caught
+     * @param itemClickListener
+     */
     void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 
-    // parent activity will implement this method to respond to click events
+    /**
+     * Parent activity will implement this method to respond to click events
+     */
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }

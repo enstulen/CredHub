@@ -16,6 +16,10 @@ public class DetailActivity extends AppCompatActivity {
     Button showPasswordButton, exportButton;
     String username, password;
 
+    /**
+     * Set up textViews, buttons and OnClickListener. Fills in the textviews based on the data from the intent.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,10 +66,16 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Shows password instead of ****** for the textview
+     */
     public void showPassword() {
         passwordTextView.setText(password);
     }
 
+    /**
+     * Exports record to the SOAP database and shows a toast when done
+     */
     public void exportRecord() {
         String uuid = UUID.randomUUID().toString();
         SOAPSingleton soapSingleton = SOAPSingleton.getInstance();

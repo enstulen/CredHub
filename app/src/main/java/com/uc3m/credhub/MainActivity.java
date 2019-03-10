@@ -31,6 +31,10 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
         getDataFromDB();
     }
 
+    /**
+     * Set up floatingActionbutton, databasehelper, recyclerview
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +71,11 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
         editor.apply();
     }
 
+    /**
+     * Clicking an item will go to the DetailActivity. Clicking the delete button will delete the entry from the DB.
+     * @param view
+     * @param position
+     */
     @Override
     public void onItemClick(View view, int position) {
 
@@ -90,13 +99,20 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
 
     }
 
+    /**
+     * Inflate the menu; this adds items to the action bar if it is present.
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
+    /**
+     * Gets the data from the database and updates the passwordList and notifies the adapter.
+     */
     public void getDataFromDB() {
         passwordList.clear();
         Cursor res = db.getAllData();
@@ -111,14 +127,15 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
         }
     }
 
+    /**
+     * Handle action bar item clicks. Import will go to ImportActivity. Refresh will refresh the list.
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_import) {
             startActivity(new Intent(getBaseContext(), ImportActivity.class));
             return true;

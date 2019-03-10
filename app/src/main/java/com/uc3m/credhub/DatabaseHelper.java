@@ -18,19 +18,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, 1);
     }
 
-
+    /**
+     * Create database with static variables above.
+     * @param db
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, DESCRIPTION TEXT, USERNAME TEXT, PASSWORD TEXT) ");
 
     }
 
+    /**
+     * Upgrade database by dropping the table and creating it from scratch again with onCreate(db)
+     * @param db
+     * @param oldVersion
+     * @param newVersion
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
 
+    /**
+     * Insert data in the database. The three paramaters corresponds to the columns in the database.
+     * @param description
+     * @param username
+     * @param password
+     * @return
+     */
     public boolean insertData(String description, String username, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -45,12 +61,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Returns all data in the database
+     * @return
+     */
     public Cursor getAllData() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
         return res;
     }
 
+    /**
+     * Delete the data in the database
+     * @param id
+     * @return
+     */
     public Integer deleteData(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_NAME, "ID = ?", new String[] {id});

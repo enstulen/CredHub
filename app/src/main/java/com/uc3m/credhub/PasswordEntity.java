@@ -6,6 +6,13 @@ public class PasswordEntity {
     String username;
     String password;
 
+    /**
+     * Password entity to be stored in database
+     * @param ID
+     * @param description
+     * @param username
+     * @param password
+     */
     public PasswordEntity(String ID, String description, String username, String password) {
         this.ID = ID;
         this.description = description;

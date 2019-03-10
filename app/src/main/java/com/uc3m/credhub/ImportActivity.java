@@ -19,6 +19,10 @@ public class ImportActivity extends AppCompatActivity implements MainRecyclerVie
     DatabaseHelper db;
 
 
+    /**
+     * Set up SOAP singleton, recyclerview and databasehelper
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +48,11 @@ public class ImportActivity extends AppCompatActivity implements MainRecyclerVie
 
     }
 
-
+    /**
+     * Clicking a row will insert it into DB. Clicking the delete button will tell the user it's not possible to delete from the server.
+     * @param view
+     * @param position
+     */
     @Override
     public void onItemClick(View view, int position) {
         switch (view.getId()){

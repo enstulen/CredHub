@@ -15,6 +15,11 @@ public class AddActivity extends AppCompatActivity {
 
     DatabaseHelper db;
 
+
+    /**
+     * Setup Databasehelper, EditTexts and Button
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +37,9 @@ public class AddActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Onclicklistener for save-button. Inserts data in the database. Shows toast if failed.
+     */
     public void addData() {
         saveButton.setOnClickListener(
                 new View.OnClickListener() {
