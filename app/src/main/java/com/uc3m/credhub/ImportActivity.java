@@ -29,7 +29,7 @@ public class ImportActivity extends AppCompatActivity implements MainRecyclerVie
         setContentView(R.layout.import_view);
         setTitle("Import");
 
-        SOAPSingleton soap = SOAPSingleton.getInstance();
+        SOAPSingleton soap = SOAPSingleton.getInstance(this);
         soap.context = this;
         passwordList = soap.importData();
 

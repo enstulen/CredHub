@@ -1,6 +1,7 @@
 package com.uc3m.credhub;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
@@ -15,28 +16,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import static android.content.Context.MODE_PRIVATE;
+
 class SOAPSingleton {
-    public static Context context;
-    private static HttpTransportSE androidHttpTransport;
-    private static List<HeaderProperty> headerList_basicAuth;
+    private static boolean USE_HTTPS = false;
+    private static boolean USE_BASIC_AUTH = true;
     private static final String WS_NAMESPACE = "http://sdm_webrepo/";
     private static final String WS_METHOD_LIST = "ListCredentials";
     private static final String WS_METHOD_IMPORT = "ImportRecord";
     private static final String WS_METHOD_EXPORT = "ExportRecord";
+
+    Context context;
+    HttpTransportSE androidHttpTransport;
+    List<HeaderProperty> headerList_basicAuth;
     SoapSerializationEnvelope envelope;
     SoapObject request;
     ArrayList<PasswordEntity> passwordList;
 
-    boolean USE_HTTPS;
-    boolean USE_BASIC_AUTH;
     String BASIC_AUTH_USERNAME = "sdm";
     String BASIC_AUTH_PASSWORD = "repo4droid";
-    URL urlWebService;
-
 
     // static variable single_instance of type Singleton
     private static SOAPSingleton single_instance = null;
-
 
     // private constructor restricted to this class itself
     private SOAPSingleton() { }
@@ -45,18 +46,31 @@ class SOAPSingleton {
      * Get the singleton instance
      * @return
      */
-    public static SOAPSingleton getInstance() {
+    public static SOAPSingleton getInstance(Context context) {
 
         if (single_instance == null) {
-        /*    SharedPreferences prefs = context.getSharedPreferences("webservice_url", MODE_PRIVATE);
-            String webservice_url = prefs.getString("webservice_url", "http://10.0.2.2/SDM/WebRepo?wsdl");*/
             single_instance = new SOAPSingleton();
+            single_instance.context = context.getApplicationContext();
             single_instance.envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            single_instance.USE_HTTPS = false;
-            single_instance.USE_BASIC_AUTH = false;
-            single_instance.androidHttpTransport = new HttpTransportSE("http://10.0.2.2/SDM/WebRepo?wsdl");
+            SharedPreferences urlPrefs = context.getSharedPreferences("webservice_url", MODE_PRIVATE);
+            String webserviceUrl = urlPrefs.getString("webservice_url", "http://10.0.2.2/SDM/WebRepo?wsdl");
+            single_instance.androidHttpTransport = new HttpTransportSE(webserviceUrl);
             single_instance.passwordList = new ArrayList<>();
         }
+
+        // Activate basic authentication
+        if (USE_BASIC_AUTH) {
+            single_instance.headerList_basicAuth = new ArrayList<HeaderProperty>();
+            SharedPreferences prefs = context.getSharedPreferences("login", MODE_PRIVATE);
+            String username = prefs.getString("username", "username");
+            String password = prefs.getString("password", "");
+            String strUserPass = username + ":" + password;
+            single_instance.headerList_basicAuth.add(new HeaderProperty("Authorization", "Basic " + org.kobjects.base64.Base64.encode(strUserPass.getBytes())));
+        }
+        else {
+            single_instance.headerList_basicAuth = null;
+        }
+
 
         return single_instance;
     }
@@ -132,7 +146,6 @@ class SOAPSingleton {
                         listIds.addAll((Vector<SoapPrimitive>) envelope.getResponse());
                     else if (envelope.getResponse() instanceof SoapPrimitive) // 1 element
                         listIds.add((SoapPrimitive) envelope.getResponse());
-                    //System.out.println("List of records stored on the repo: ");
                     passwordList.clear();
 
                     for (int i = 0; i < listIds.size(); i++) {
@@ -150,16 +163,11 @@ class SOAPSingleton {
 
                             Vector<SoapPrimitive> importedRecord = (Vector<SoapPrimitive>) envelope.getResponse();
                             if (importedRecord.size() == 3) {
-                                System.out.println("Record imported successfully: ");
-/*                                System.out.println("ID: " + importedRecord.get(0));
-                                System.out.println("Username: " + importedRecord.get(1));
-                                System.out.println("Password: " + importedRecord.get(2));*/
                                 PasswordEntity entity = new PasswordEntity(importedRecord.get(0).toString(), "description", importedRecord.get(1).toString(), importedRecord.get(2).toString());
                                 passwordList.add(entity);
                             } else
                                 System.out.println("Import error - " + importedRecord.get(0));
                         } else System.out.println("Import aborted - No records found on the repo");
-                        System.out.println("- " + listIds.get(i).toString());
                     }
                     return;
 

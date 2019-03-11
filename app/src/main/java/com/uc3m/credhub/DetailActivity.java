@@ -78,7 +78,7 @@ public class DetailActivity extends AppCompatActivity {
      */
     public void exportRecord() {
         String uuid = UUID.randomUUID().toString();
-        SOAPSingleton soapSingleton = SOAPSingleton.getInstance();
+        SOAPSingleton soapSingleton = SOAPSingleton.getInstance(this);
         soapSingleton.exportRecord(uuid, username, password);
         Toast.makeText(this, "Exported record", Toast.LENGTH_LONG).show();
     }

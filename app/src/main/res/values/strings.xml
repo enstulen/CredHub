@@ -2,4 +2,7 @@
     <string name="app_name">CredHub</string>
     <string name="action_import">Import</string>
     <string name="action_refresh">Refresh</string>
+    <string name="action_logout">Logout</string>
+    <string name="salt">B9MpcDypp</string>
+    <string name="hash">61f8d8b2ed75413364d7657c758641071444a7b611dd982ec30c4d54d5edffaf</string>
 </resources>

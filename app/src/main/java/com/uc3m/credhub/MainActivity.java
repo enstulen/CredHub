@@ -65,10 +65,6 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
                 new LinearLayoutManager(this).getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        //Sharedprefs webservice_url
-        SharedPreferences.Editor editor = getSharedPreferences("webservice_url", MODE_PRIVATE).edit();
-        editor.putString("webservice_url", "http://10.0.2.2/SDM/WebRepo?wsdl");
-        editor.apply();
     }
 
     /**
@@ -141,6 +137,8 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
             return true;
         } else if (id == R.id.action_refresh) {
             getDataFromDB();
+        } else if (id == R.id.action_logout) {
+            startActivity(new Intent(getBaseContext(), LoginActivity.class));
         }
 
         return super.onOptionsItemSelected(item);
