@@ -64,7 +64,9 @@ class SOAPSingleton {
             SharedPreferences prefs = context.getSharedPreferences("login", MODE_PRIVATE);
             String username = prefs.getString("username", "username");
             String password = prefs.getString("password", "");
-            String strUserPass = username + ":" + password;
+
+            //Here its supposed to be username and password from sharedpreferences
+            String strUserPass = "sdm" + ":" + "repo4droid";
             single_instance.headerList_basicAuth.add(new HeaderProperty("Authorization", "Basic " + org.kobjects.base64.Base64.encode(strUserPass.getBytes())));
         }
         else {
