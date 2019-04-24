@@ -35,14 +35,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_4 = "password";
 
     private static DatabaseHelper single_instance = null;
-    private static final String SAMPLE_ALIAS = "MYALIAS";
+    private static final String KEY_ALIAS = "MYALIAS";
 
     public Context context;
     public SQLiteDatabase db;
 
     private Encryptor encryptor;
     private Decryptor decryptor;
-
+    
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -181,11 +181,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String iv = prefs.getString("iv", "");
                 byte[] ivData = Base64.decode(iv, Base64.DEFAULT);
                 return decryptor
-                        .decryptData(SAMPLE_ALIAS, data, ivData);
+                        .decryptData(KEY_ALIAS, data, ivData);
             }
 
             return decryptor
-                    .decryptData(SAMPLE_ALIAS, data, encryptor.getIv());
+                    .decryptData(KEY_ALIAS, data, encryptor.getIv());
         } catch (UnrecoverableEntryException | NoSuchAlgorithmException |
                 KeyStoreException | NoSuchPaddingException | NoSuchProviderException |
                 IOException | InvalidKeyException e) {
@@ -206,7 +206,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         try {
             final byte[] encryptedText = encryptor
-                    .encryptText(SAMPLE_ALIAS, text);
+                    .encryptText(KEY_ALIAS, text);
 
             String encryptedTextString = Base64.encodeToString(encryptedText, Base64.DEFAULT);
             return encryptedTextString;
