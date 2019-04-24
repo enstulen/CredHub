@@ -19,6 +19,23 @@ class Encryptor {
     Encryptor() {
     }
 
+    /**
+     * Encrypt the text using AES and a given alias.
+     * @param alias
+     * @param textToEncrypt
+     * @return
+     * @throws UnrecoverableEntryException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     * @throws NoSuchProviderException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeyException
+     * @throws IOException
+     * @throws InvalidAlgorithmParameterException
+     * @throws SignatureException
+     * @throws BadPaddingException
+     * @throws IllegalBlockSizeException
+     */
     byte[] encryptText(final String alias, final String textToEncrypt)
             throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException,
             NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, IOException,
@@ -34,6 +51,14 @@ class Encryptor {
         return encryption;
     }
 
+    /**
+     * Generate secret key from Android Key Store
+     * @param alias
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchProviderException
+     * @throws InvalidAlgorithmParameterException
+     */
     @NonNull
     private SecretKey getSecretKey(final String alias) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidAlgorithmParameterException {
@@ -50,10 +75,18 @@ class Encryptor {
         return keyGenerator.generateKey();
     }
 
+    /**
+     * Returns stored encrypted text. Also stored in SharedPreferences.
+     * @return
+     */
     byte[] getEncryption() {
         return encryption;
     }
 
+    /**
+     * Returns stored IV. Also stored in SharedPreferences.
+     * @return
+     */
     byte[] getIv() {
         return iv;
     }

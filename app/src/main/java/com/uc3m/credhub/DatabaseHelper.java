@@ -26,17 +26,19 @@ import javax.crypto.NoSuchPaddingException;
 import static android.content.Context.MODE_PRIVATE;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+
     public static final String DATABASE_NAME = "credhub.db";
     public static final String TABLE_NAME = "password_table";
     public static final String COL_1 = "ID";
     public static final String COL_2 = "description";
     public static final String COL_3 = "username";
     public static final String COL_4 = "password";
-    public Context context;
+
     private static DatabaseHelper single_instance = null;
-    public SQLiteDatabase db;
     private static final String SAMPLE_ALIAS = "MYALIAS";
 
+    public Context context;
+    public SQLiteDatabase db;
 
     private Encryptor encryptor;
     private Decryptor decryptor;
@@ -47,14 +49,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.context = context;
     }
 
+    /**
+     * Returns singleton instance of Databasehelper. Creates an encryptor and decryptor to encrypt/decrypt password
+     * The encrypted password is stored in SharedPreferences along with the IV. Creates a random password if one
+     * is not already created by using the random UUID function.
+     * @param context
+     * @return
+     */
+
     public static DatabaseHelper getInstance(Context context) {
         if (single_instance == null) {
             single_instance = new DatabaseHelper(context);
             SQLiteDatabase.loadLibs(context);
 
-
             single_instance.encryptor = new Encryptor();
-
             try {
                 single_instance.decryptor = new Decryptor();
             } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException |
@@ -157,6 +165,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    /**
+     * Decrypt text using the decryptor class. If there is no IV in memory, get it from SharedPreferences.
+     * @param text
+     * @return
+     */
     private String decryptText(String text) {
         try {
             byte[] data = Base64.decode(text, Base64.DEFAULT);
@@ -183,6 +196,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Encrypt text using the encryptor class.
+     * @param text
+     * @return
+     */
 
     public String encryptText(String text) {
 
