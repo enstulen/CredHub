@@ -2,8 +2,28 @@ package com.uc3m.credhub;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.util.Base64;
+
 import net.sqlcipher.database.*;
+
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
+import java.util.UUID;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "credhub.db";
@@ -15,7 +35,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Context context;
     private static DatabaseHelper single_instance = null;
     public SQLiteDatabase db;
+    private static final String SAMPLE_ALIAS = "MYALIAS";
 
+
+    private Encryptor encryptor;
+    private Decryptor decryptor;
 
 
     public DatabaseHelper(Context context) {
@@ -27,7 +51,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (single_instance == null) {
             single_instance = new DatabaseHelper(context);
             SQLiteDatabase.loadLibs(context);
-            single_instance.db = single_instance.getWritableDatabase("password");
+
+
+            single_instance.encryptor = new Encryptor();
+
+            try {
+                single_instance.decryptor = new Decryptor();
+            } catch (CertificateException | NoSuchAlgorithmException | KeyStoreException |
+                    IOException e) {
+                e.printStackTrace();
+            }
+
+
+            SharedPreferences prefs = context.getSharedPreferences("encryptedDBPassword", MODE_PRIVATE);
+            String encryptedDBPassword = prefs.getString("encryptedDBPassword", "");
+
+            if (encryptedDBPassword.equals("")) {
+                //Create new password
+                String randomString = UUID.randomUUID().toString();
+                String encryptedString = single_instance.encryptText(randomString);
+                SharedPreferences.Editor mEditor = prefs.edit();
+                mEditor.putString("encryptedDBPassword",encryptedString);
+                String iv = Base64.encodeToString(single_instance.encryptor.getIv(), Base64.DEFAULT);
+                mEditor.putString("iv",iv);
+                mEditor.commit();
+                single_instance.db = single_instance.getWritableDatabase(single_instance.decryptText(encryptedString));
+
+            } else {
+                single_instance.db = single_instance.getWritableDatabase(single_instance.decryptText(encryptedDBPassword));
+            }
+
+
 
         }
         return single_instance;
@@ -100,5 +154,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return null;
         }
         return db.delete(TABLE_NAME, "ID = ?", new String[] {id});
+    }
+
+
+    private String decryptText(String text) {
+        try {
+            byte[] data = Base64.decode(text, Base64.DEFAULT);
+
+            System.out.println(encryptor.getIv());
+
+            if (encryptor.getIv() == null) {
+                SharedPreferences prefs = context.getSharedPreferences("encryptedDBPassword", MODE_PRIVATE);
+                String iv = prefs.getString("iv", "");
+                byte[] ivData = Base64.decode(iv, Base64.DEFAULT);
+                return decryptor
+                        .decryptData(SAMPLE_ALIAS, data, ivData);
+            }
+
+            return decryptor
+                    .decryptData(SAMPLE_ALIAS, data, encryptor.getIv());
+        } catch (UnrecoverableEntryException | NoSuchAlgorithmException |
+                KeyStoreException | NoSuchPaddingException | NoSuchProviderException |
+                IOException | InvalidKeyException e) {
+            return null;
+        } catch (IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    public String encryptText(String text) {
+
+        try {
+            final byte[] encryptedText = encryptor
+                    .encryptText(SAMPLE_ALIAS, text);
+
+            String encryptedTextString = Base64.encodeToString(encryptedText, Base64.DEFAULT);
+            return encryptedTextString;
+
+        } catch (UnrecoverableEntryException | NoSuchAlgorithmException | NoSuchProviderException |
+                KeyStoreException | IOException | NoSuchPaddingException | InvalidKeyException e) {
+            return null;
+        } catch (InvalidAlgorithmParameterException | SignatureException |
+                IllegalBlockSizeException | BadPaddingException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

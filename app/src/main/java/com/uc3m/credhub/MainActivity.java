@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
 
     /**
      * Set up floatingActionbutton, databasehelper, recyclerview
+     *
      * @param savedInstanceState
      */
     @Override
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
         setSupportActionBar(toolbar);
 
         //Databasehelper
-        db =  DatabaseHelper.getInstance(this);
+        db = DatabaseHelper.getInstance(this);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
 
     /**
      * Clicking an item will go to the DetailActivity. Clicking the delete button will delete the entry from the DB.
+     *
      * @param view
      * @param position
      */
@@ -97,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
 
     /**
      * Inflate the menu; this adds items to the action bar if it is present.
+     *
      * @param menu
      * @return
      */
@@ -112,19 +115,21 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
     public void getDataFromDB() {
         passwordList.clear();
         Cursor res = db.getAllData();
-        if (res.getCount() == 0) {
+        if (res == null || res.getCount() == 0) {
             Toast.makeText(this, "No data in DB", Toast.LENGTH_SHORT).show();
+        } else {
+            while (res.moveToNext()) {
+                PasswordEntity entity = new PasswordEntity(res.getString(0), res.getString(1), res.getString(2), res.getString(3));
+                passwordList.add(entity);
+                adapter.notifyDataSetChanged();
+            }
         }
 
-        while (res.moveToNext()) {
-            PasswordEntity entity = new PasswordEntity(res.getString(0), res.getString(1), res.getString(2), res.getString(3));
-            passwordList.add(entity);
-            adapter.notifyDataSetChanged();
-        }
     }
 
     /**
      * Handle action bar item clicks. Import will go to ImportActivity. Refresh will refresh the list.
+     *
      * @param item
      * @return
      */
