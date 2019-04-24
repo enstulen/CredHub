@@ -26,7 +26,7 @@ public class AddActivity extends AppCompatActivity {
         setContentView(R.layout.add_view);
         setTitle("Add new");
 
-        db = new DatabaseHelper(this);
+        db =  DatabaseHelper.getInstance(this);
 
         editDescription = (EditText) findViewById(R.id.text_field_description);
         editUsername = (EditText) findViewById(R.id.text_field_username);

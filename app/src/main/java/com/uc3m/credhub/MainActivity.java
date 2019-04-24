@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements MainRecyclerViewA
         setSupportActionBar(toolbar);
 
         //Databasehelper
-        db = new DatabaseHelper(this);
+        db =  DatabaseHelper.getInstance(this);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

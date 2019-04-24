@@ -3,8 +3,7 @@ package com.uc3m.credhub;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import net.sqlcipher.database.*;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "credhub.db";
@@ -13,9 +12,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_2 = "description";
     public static final String COL_3 = "username";
     public static final String COL_4 = "password";
+    public Context context;
+    private static DatabaseHelper single_instance = null;
+
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
+        this.context = context;
+    }
+
+    public static DatabaseHelper getInstance(Context context) {
+        if (single_instance == null) {
+            single_instance = new DatabaseHelper(context);
+        }
+        return single_instance;
     }
 
     /**
@@ -48,7 +58,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return
      */
     public boolean insertData(String description, String username, String password) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase.loadLibs(context);
+        SQLiteDatabase db = this.getWritableDatabase("password");
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_2, description);
         contentValues.put(COL_3, username);
@@ -66,7 +77,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return
      */
     public Cursor getAllData() {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase.loadLibs(context);
+        SQLiteDatabase db = this.getWritableDatabase("password");
         Cursor res = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
         return res;
     }
@@ -77,7 +89,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return
      */
     public Integer deleteData(String id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase.loadLibs(context);
+        SQLiteDatabase db = this.getWritableDatabase("password");
         return db.delete(TABLE_NAME, "ID = ?", new String[] {id});
     }
 }

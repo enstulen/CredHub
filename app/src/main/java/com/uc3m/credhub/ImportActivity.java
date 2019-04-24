@@ -44,7 +44,7 @@ public class ImportActivity extends AppCompatActivity implements MainRecyclerVie
                 new LinearLayoutManager(this).getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        db = new DatabaseHelper(this);
+        db =  DatabaseHelper.getInstance(this);
 
     }
 
