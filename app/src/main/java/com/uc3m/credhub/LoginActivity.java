@@ -19,6 +19,12 @@ public class LoginActivity extends AppCompatActivity {
     EditText editTextUsername, editTextPassword;
     Button loginButton;
 
+    /**
+     * Get the button and login with implement onClick. This will take the username/password from the textViews and
+     * and compare them to the hash that is stored in Strings.xml.
+     * @param savedInstanceState
+     */
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -53,7 +59,6 @@ public class LoginActivity extends AppCompatActivity {
                         byte[] digest = md.digest();
 
                         String hex = String.format("%064x", new BigInteger(1, digest));
-                        System.out.println(hex);
 
                         if (hex.equals(getString(R.string.hash))) {
                             Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
