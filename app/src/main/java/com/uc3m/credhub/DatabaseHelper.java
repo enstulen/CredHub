@@ -14,6 +14,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_4 = "password";
     public Context context;
     private static DatabaseHelper single_instance = null;
+    public SQLiteDatabase db;
+
 
 
     public DatabaseHelper(Context context) {
@@ -24,6 +26,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static DatabaseHelper getInstance(Context context) {
         if (single_instance == null) {
             single_instance = new DatabaseHelper(context);
+            SQLiteDatabase.loadLibs(context);
+            single_instance.db = single_instance.getWritableDatabase("password");
+
         }
         return single_instance;
     }
@@ -58,8 +63,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return
      */
     public boolean insertData(String description, String username, String password) {
-        SQLiteDatabase.loadLibs(context);
-        SQLiteDatabase db = this.getWritableDatabase("password");
+        if (db == null) {
+            return false;
+        }
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_2, description);
         contentValues.put(COL_3, username);
@@ -77,8 +83,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return
      */
     public Cursor getAllData() {
-        SQLiteDatabase.loadLibs(context);
-        SQLiteDatabase db = this.getWritableDatabase("password");
+        if (db == null) {
+            return null;
+        }
         Cursor res = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
         return res;
     }
@@ -89,8 +96,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return
      */
     public Integer deleteData(String id) {
-        SQLiteDatabase.loadLibs(context);
-        SQLiteDatabase db = this.getWritableDatabase("password");
+        if (db == null) {
+            return null;
+        }
         return db.delete(TABLE_NAME, "ID = ?", new String[] {id});
     }
 }
